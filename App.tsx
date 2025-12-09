@@ -14,6 +14,7 @@ import {
   FileJson
 } from 'lucide-react';
 import { Button } from './components/Button';
+import { PromptGeneratorModal } from './components/prompt/PromptGeneratorModal';
 import { VideoPlayer } from './components/VideoPlayer';
 import { generateVeoVideo } from './services/veoService';
 import { setCredentials } from './services/authService';
@@ -26,6 +27,7 @@ const App: React.FC = () => {
 
   const initialSettings = useMemo(() => (typeof window !== 'undefined' ? loadSettings() : null), []);
   const [prompt, setPrompt] = useState(initialSettings?.prompt ?? '');
+  const [showGenerator, setShowGenerator] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>(initialSettings?.aspectRatio ?? AspectRatio.Landscape);
   const [resolution, setResolution] = useState<Resolution>(initialSettings?.resolution ?? Resolution.HD);
   const [model, setModel] = useState<VeoModel>(initialSettings?.model ?? VeoModel.Fast);
@@ -188,15 +190,23 @@ const App: React.FC = () => {
                   <Terminal className="w-3 h-3" />
                   Prompt
                 </label>
+                <button
+                  type="button"
+                  onClick={() => setShowGenerator(true)}
+                  className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 hover:text-white"
+                >
+                  Open Generator
+                </button>
               </div>
-              <textarea
-                id="prompt"
-                rows={6}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-4 text-sm text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-white focus:ring-0 transition-colors resize-none font-sans"
-                placeholder="Describe your scene..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
+              <div className="relative w-full rounded-lg border border-zinc-800 overflow-hidden focus-within:border-white transition-colors grid">
+                <textarea
+                  id="prompt"
+                  className="w-full h-full min-h-[180px] bg-zinc-950 p-4 text-sm text-zinc-100 placeholder-zinc-700 focus:outline-none resize-none font-sans border-0"
+                  placeholder="Describe your scene..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="h-px bg-zinc-900 w-full"></div>
@@ -215,8 +225,8 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setAspectRatio(AspectRatio.Landscape)}
                     className={`flex items-center justify-center gap-2 p-3 rounded border text-sm font-medium transition-colors ${aspectRatio === AspectRatio.Landscape
-                        ? 'bg-white text-black border-white'
-                        : 'bg-black text-zinc-500 border-zinc-800 hover:border-zinc-600'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-black text-zinc-500 border-zinc-800 hover:border-zinc-600'
                       }`}
                   >
                     <Monitor className="w-4 h-4" />
@@ -225,8 +235,8 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setAspectRatio(AspectRatio.Portrait)}
                     className={`flex items-center justify-center gap-2 p-3 rounded border text-sm font-medium transition-colors ${aspectRatio === AspectRatio.Portrait
-                        ? 'bg-white text-black border-white'
-                        : 'bg-black text-zinc-500 border-zinc-800 hover:border-zinc-600'
+                      ? 'bg-white text-black border-white'
+                      : 'bg-black text-zinc-500 border-zinc-800 hover:border-zinc-600'
                       }`}
                   >
                     <Smartphone className="w-4 h-4" />
@@ -244,8 +254,8 @@ const App: React.FC = () => {
                       key={res}
                       onClick={() => setResolution(res)}
                       className={`flex-1 py-1.5 text-xs font-medium rounded-sm transition-colors ${resolution === res
-                          ? 'bg-zinc-800 text-white'
-                          : 'text-zinc-600 hover:text-zinc-400'
+                        ? 'bg-zinc-800 text-white'
+                        : 'text-zinc-600 hover:text-zinc-400'
                         }`}
                     >
                       {res}
@@ -261,8 +271,8 @@ const App: React.FC = () => {
                   <div
                     onClick={() => setModel(VeoModel.Fast)}
                     className={`cursor-pointer px-4 py-3 rounded border flex items-center justify-between transition-colors ${model === VeoModel.Fast
-                        ? 'bg-zinc-900 border-zinc-600'
-                        : 'bg-black border-zinc-800 hover:border-zinc-700'
+                      ? 'bg-zinc-900 border-zinc-600'
+                      : 'bg-black border-zinc-800 hover:border-zinc-700'
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -275,8 +285,8 @@ const App: React.FC = () => {
                   <div
                     onClick={() => setModel(VeoModel.Quality)}
                     className={`cursor-pointer px-4 py-3 rounded border flex items-center justify-between transition-colors ${model === VeoModel.Quality
-                        ? 'bg-zinc-900 border-zinc-600'
-                        : 'bg-black border-zinc-800 hover:border-zinc-700'
+                      ? 'bg-zinc-900 border-zinc-600'
+                      : 'bg-black border-zinc-800 hover:border-zinc-700'
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -356,6 +366,11 @@ const App: React.FC = () => {
 
         </div>
       </main>
+      <PromptGeneratorModal
+        open={showGenerator}
+        onClose={() => setShowGenerator(false)}
+        onInsert={(text) => setPrompt(text)}
+      />
     </div>
   );
 };
