@@ -20,6 +20,7 @@ import { generateVeoVideo } from './services/veoService';
 import { setCredentials } from './services/authService';
 import { AspectRatio, Resolution, VeoModel, VideoGenerationState, ServiceAccount } from './types';
 import { loadSettings, saveSettings } from './services/settingsService';
+import { InstallPrompt } from './components/InstallPrompt';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -167,6 +168,7 @@ const App: React.FC = () => {
               <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
               Vertex AI
             </div>
+            <InstallPrompt />
             <button
               onClick={() => setIsAuthenticated(false)}
               className="text-xs text-zinc-600 hover:text-white transition-colors font-mono uppercase"
