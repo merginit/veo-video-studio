@@ -73,6 +73,23 @@ export function generateTOON(data: PromptData): string {
 
   const lines: string[] = []
 
+  const quoteIfNeeded = (s: string): string => {
+    if (s.length === 0) return '""'
+    if (s.includes('\n') || s.includes('\r')) return JSON.stringify(s)
+    if (s.startsWith(' ') || s.endsWith(' ')) return JSON.stringify(s)
+    if (s.startsWith('-')) return JSON.stringify(s)
+    if (s.includes('"')) return JSON.stringify(s)
+    return s
+  }
+
+  const formatValue = (v: unknown): string => {
+    if (typeof v === 'string') return quoteIfNeeded(v)
+    if (typeof v === 'number') return Number.isFinite(v) ? String(v) : JSON.stringify(String(v))
+    if (typeof v === 'boolean') return String(v)
+    if (v === null) return 'null'
+    return JSON.stringify(v)
+  }
+
   const emit = (value: unknown, indent: number) => {
     const pad = ' '.repeat(indent)
     if (value === null || value === undefined) return
@@ -83,11 +100,11 @@ export function generateTOON(data: PromptData): string {
           lines.push(`${pad}${k}:`)
           emit(v, indent + 2)
         } else if (v !== undefined) {
-          lines.push(`${pad}${k}: ${String(v)}`)
+          lines.push(`${pad}${k}: ${formatValue(v)}`)
         }
       }
     } else {
-      lines.push(`${pad}${String(value)}`)
+      lines.push(`${pad}${formatValue(value)}`)
     }
   }
 
